@@ -6,8 +6,10 @@ const users = require("./users-model");
 const router = express.Router();
 
 router.get("/users", (req, res) => {
+  console.log(req.query);
+
   users
-    .find()
+    .find(req.query)
     .then((users) => {
       res.status(200).json(users);
     })
@@ -140,6 +142,25 @@ router.get("/users/userID/posts/postID", (req, res) => {
       console.log(err);
       res.status(500).json({
         message: "could not get user post",
+      });
+    });
+});
+router.post("/users/:id/posts", (req, res) => {
+  if (!req.body.text) {
+    res.status(400).json({
+      message: "need a value for text",
+    });
+  }
+
+  users
+    .addUserPost(req.params.is, req.body)
+    .then((post) => {
+      res.status(201).json(post);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({
+        message: "could not crreate user post",
       });
     });
 });
